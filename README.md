@@ -19,7 +19,7 @@ Modifiers must be separated with "+", keys with " "
 ```nix
 # configuration.nix
 
-imports = [ inputs.scawm.homeManagerModules ];
+imports = [ inputs.scawm.homeManagerModules.scawm ];
 
 config.scawm = {
     enable = true;

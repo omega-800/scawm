@@ -28,8 +28,8 @@ in
       modes = mapAttrs' (
         _: v:
         nameValuePair v.name (
-          (optionalAttrs (v ? switch) (mapAttrs (_: v: "mode default, ${v}") v.switch))
-          // (v.stay or { })
+          (optionalAttrs (v ? switch) (mapAttrs (_: v: "mode default, exec ${v}") v.switch))
+          // (optionalAttrs (v ? stay) (mapAttrs (_: v: "exec ${v}") v.stay))
           // {
             "Escape" = "mode default";
           }
