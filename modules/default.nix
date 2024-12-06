@@ -4,24 +4,10 @@ let
   inherit (lib.types)
     str
     attrsOf
+    lazyAttrsOf
     submodule
     oneOf
     ;
-  bindOpts = submodule (
-    {
-      name,
-      config,
-      options,
-      ...
-    }:
-    {
-      # TODO: apply regex to check validity
-      apply =
-        i:
-        assert (name != "") "";
-        i;
-    }
-  );
   modeOpts = submodule (
     {
       name,
@@ -61,9 +47,13 @@ in
       default = "Super";
     };
     bindings = mkOption {
-      type = attrsOf (oneOf [
-        modeOpts
+      description = "Keyboard shorcuts live here";
+      type = lazyAttrsOf (oneOf [
+        # what the actual fuck. the order of these types matters.
+        # if modeOpts is first then nix interprets a string with 
+        # an interpolated path as a module and tries to import it
         str
+        modeOpts
       ]);
       default = { };
       example = {

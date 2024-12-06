@@ -10,7 +10,11 @@
   };
 
   outputs =
-    { self, nixpkgs, home-manager }:
+    {
+      self,
+      nixpkgs,
+      home-manager,
+    }:
     let
       systems = [
         "x86_64-linux"
@@ -18,31 +22,38 @@
         "i686-linux"
       ];
       forEachSystem = f: nixpkgs.lib.genAttrs systems f;
+      mkPkgs = system: import nixpkgs { inherit system; };
     in
     {
       homeManagerModules = rec {
-        scawm = import ./modules;
+        scawm = ./modules;
         default = scawm;
       };
       homeConfigurations = forEachSystem (
         system:
         home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = mkPkgs system;
           modules = [
             self.homeManagerModules.scawm
             ./test
           ];
         }
       );
-      devShells = forEachSystem (system: rec {
-        scawm = nixpkgs.legacyPackages.${system}.mkShell {
-          packages = with nixpkgs.legacyPackages.${system}; [
-            nixd
-            nixfmt-rfc-style
-          ];
-        };
-        default = scawm;
-      });
-      formatter = forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+      devShells = forEachSystem (
+        system:
+        let
+          pkgs = mkPkgs system;
+        in
+        rec {
+          scawm = pkgs.mkShell {
+            packages = with pkgs; [
+              nixd
+              nixfmt-rfc-style
+            ];
+          };
+          default = scawm;
+        }
+      );
+      formatter = forEachSystem (system: (mkPkgs system).nixfmt-rfc-style);
     };
 }

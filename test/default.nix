@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let
   inherit (config.scawm) modifier;
 in
@@ -10,6 +10,7 @@ in
       "${modifier} Enter" = "kitty";
       "Alt v" = "rofi clipmenu";
       "Ctrl+Shift s" = "flameshot full";
+      "${modifier} y" = "${pkgs.screenkey}/bin/screenkey";
       "${modifier} r" = {
         name = "Run";
         switch = {
