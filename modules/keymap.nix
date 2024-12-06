@@ -27,7 +27,7 @@
     # "up" = "Up";
     # "down" = "Down";
   };
-  sway = { 
+  sway = {
     "Super" = "Mod4";
   };
   hyprland = { };

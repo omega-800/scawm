@@ -37,7 +37,11 @@ let
   );
 in
 {
-  imports = [ ./river.nix ./sway.nix ./sxhkd.nix ];
+  imports = [
+    ./river.nix
+    ./sway.nix
+    ./sxhkd.nix
+  ];
   options.scawm = {
     enable = mkEnableOption "Enables ShortCuts for Any Window Manager";
     autoEnable = mkEnableOption "Configures your shortcuts for every available wm / compositor";
@@ -50,7 +54,7 @@ in
       description = "Keyboard shorcuts live here";
       type = lazyAttrsOf (oneOf [
         # what the actual fuck. the order of these types matters.
-        # if modeOpts is first then nix interprets a string with 
+        # if modeOpts is first then nix interprets a string with
         # an interpolated path as a module and tries to import it
         str
         modeOpts
