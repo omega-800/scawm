@@ -33,7 +33,7 @@ in
         // (mapAttrs' (
           _: v:
           nameValuePair v.name (
-            (optionalAttrs (v ? switch) (mapVals (v: "enter-mode normal && spawn '${v}'") v.switch))
+            (optionalAttrs (v ? switch) (mapVals (v: "enter-mode normal && ${v}") v.switch))
             // (optionalAttrs (v ? stay) (mapVals (v: "spawn '${v}'") v.stay))
             // {
               "None Escape" = "enter-mode normal";
