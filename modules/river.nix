@@ -21,7 +21,8 @@ let
   cfg = integrations.river;
   mkName = n: (if (hasInfix " " n) then n else "None ${n}");
   mapVals = f: a: mapAttrs' (n: v: nameValuePair (mkName n) (f v)) a;
-  escape' = s: replaceStrings [ "'" ] [ "\\'" ] s;
+  escape = s: replaceStrings [ "'" ] [ "\\'" ] s;
+  escape' = s: replaceStrings [ "'" "\"" ] [ "\\'" "\\\"" ] s;
 in
 {
   options.scawm.integrations.river = mkIntegration "river";
@@ -36,9 +37,9 @@ in
           _: v:
           nameValuePair v.name (
             (optionalAttrs (v ? switch) (
-              mapVals (v: "enter-mode normal && riverctl spawn '${escape' v}'") v.switch
+              mapVals (v: "spawn 'riverctl enter-mode normal && riverctl spawn \"${escape' v}\"'") v.switch
             ))
-            // (optionalAttrs (v ? stay) (mapVals (v: "spawn '${escape' v}'") v.stay))
+            // (optionalAttrs (v ? stay) (mapVals (v: "spawn '${escape v}'") v.stay))
             // {
               "None Escape" = "enter-mode normal";
             }
