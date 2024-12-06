@@ -13,8 +13,7 @@ inputs.scawm = {
 };
 ```
 
-
-Modifiers must be separated with "+", keys with " "
+modifiers must be separated with "+", keys with " "
 
 ```nix
 # configuration.nix
@@ -23,10 +22,10 @@ imports = [ inputs.scawm.homeManagerModules.scawm ];
 
 config.scawm = {
     enable = true;
-    modifier = "Super";
+    modifier = "Mod4";
     bindings = {
         "Ctrl+Shift s" = "flameshot full";
-        "Super r" = {
+        "Mod4 r" = {
             name = "Run";
             switch = {
                 "s" = "spotify";
@@ -38,3 +37,15 @@ config.scawm = {
 ```
 
 example config can be found in ./test
+
+## roadmap
+
+- simple exec's working for 
+  - [X] sxhkd (not fully tested)
+  - [X] sway
+  - [X] river (not fully tested)
+  - [ ] hyprland
+- wm-specific actions (eg. resizing)
+  - [ ] sway
+  - [ ] river
+  - [ ] hyprland
