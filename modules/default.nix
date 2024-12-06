@@ -44,7 +44,7 @@ in
     modifier = mkOption {
       type = str;
       description = "Main modifier key";
-      default = "Super";
+      default = "Mod4";
     };
     bindings = mkOption {
       description = "Keyboard shorcuts live here";
@@ -57,17 +57,17 @@ in
       ]);
       default = { };
       example = {
-        "Super Enter" = "kitty";
+        "Mod4 Enter" = "kitty";
         "Alt v" = "rofi clipmenu";
         "Ctrl+Shift s" = "flameshot full";
-        "Super r" = {
+        "Mod4 r" = {
           name = "Run";
           switch = {
             "s" = "spotify";
             "f" = "firefox";
           };
         };
-        "Super m" = {
+        "Mod4 m" = {
           name = "Music";
           stay = {
             "n" = "playerctl next";
