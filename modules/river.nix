@@ -18,6 +18,8 @@ let
     mkIntegration
     ;
   cfg = integrations.river;
+  mkName = n: (if (hasInfix " " n) then n else "None ${n}");
+  mapVals = f: a: mapAttrs' (n: v: nameValuePair (mkName n) (f v)) a;
 in
 {
   options.scawm.integrations.river = mkIntegration "river";
@@ -26,13 +28,13 @@ in
       declare-mode = modeNames;
       map =
         {
-          normal = defmode // (mapAttrs (_: v: "enter-mode ${v.name}") modes);
+          normal = (mapVals (v: v) defmode) // (mapVals (v: "enter-mode ${v.name}") modes);
         }
         // (mapAttrs' (
           _: v:
-          nameValuePair (if (hasInfix " " v.name) then v.name else "None ${v.name}") (
-            (optionalAttrs (v ? switch) (mapAttrs (_: v: "enter-mode normal && spawn '${v}'") v.switch))
-            // (optionalAttrs (v ? stay) (mapAttrs (_: v: "spawn '${v}'") v.stay))
+          nameValuePair v.name (
+            (optionalAttrs (v ? switch) (mapVals (v: "enter-mode normal && spawn '${v}'") v.switch))
+            // (optionalAttrs (v ? stay) (mapVals (v: "spawn '${v}'") v.stay))
             // {
               "None Escape" = "enter-mode normal";
             }
