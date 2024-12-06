@@ -6,6 +6,7 @@ let
     nameValuePair
     mapAttrs
     optionalAttrs
+    hasInfix
     ;
   inherit (config.scawm)
     integrations
@@ -29,7 +30,7 @@ in
         }
         // (mapAttrs' (
           _: v:
-          nameValuePair v.name (
+          nameValuePair (if (hasInfix " " v.name) then v.name else "None ${v.name}") (
             (optionalAttrs (v ? switch) (mapAttrs (_: v: "enter-mode normal && spawn '${v}'") v.switch))
             // (optionalAttrs (v ? stay) (mapAttrs (_: v: "spawn '${v}'") v.stay))
             // {
