@@ -26,6 +26,7 @@ let
     ;
   cfg = integrations.river;
   mkKeys = n: (if (hasInfix " " n) then n else "None ${n}");
+  mkSpawn = s: "spawn '${escapeA s}'";
   mapVals = f: a: mapAttrs' (n: v: nameValuePair (mkKeys n) (f v)) a;
   escapeA = s: escape [ "'" ] s;
   concatImapAttrsLines =
@@ -44,12 +45,12 @@ in
         declare-mode = modeNames;
         map =
           {
-            normal = (mapVals (v: v) defmode) // (mapVals (v: "enter-mode ${v.name}") modes);
+            normal = (mapVals mkSpawn defmode) // (mapVals (v: "enter-mode ${v.name}") modes);
           }
           // (mapAttrs' (
             _: v:
             nameValuePair v.name (
-              (optionalAttrs (v ? stay) (mapVals (v: "spawn '${escapeA v}'") v.stay))
+              (optionalAttrs (v ? stay) (mapVals mkSpawn v.stay))
               // {
                 "None Escape" = "enter-mode normal";
               }
