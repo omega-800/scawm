@@ -2,10 +2,12 @@
 let
   inherit (lib)
     mkIf
+    toLower
     mapAttrs'
     nameValuePair
     concatMapAttrs
     optionalAttrs
+    replaceStrings
     ;
   inherit (config.scawm)
     integrations
@@ -15,19 +17,24 @@ let
     defmode
     modeNames
     mkIntegration
-    spcToPlus
+    mapAttrNamesRec
+    spcToPlus'
     ;
   cfg = integrations.sxhkd;
+  # TODO: change all modifiers
+  mapMod = kb: mapAttrNamesRec (replaceStrings [ "Mod4" ] [ "super" ]) kb;
+  mapLower = kb: mapAttrNamesRec toLower kb;
+  mapAll = kb: mapMod (mapLower (spcToPlus' kb));
 in
 {
   options.scawm.integrations.sxhkd = mkIntegration "sxhkd";
   config = mkIf cfg.enable {
     services.sxhkd.keybindings =
-      (spcToPlus defmode)
+      (mapAll defmode)
       // (concatMapAttrs (
         n: v:
         (optionalAttrs (v ? switch) (mapAttrs' (n': v': nameValuePair "${n} ; ${n'}" v') v.switch))
         // (optionalAttrs (v ? stay) (mapAttrs' (n': v': nameValuePair "${n} : ${n'}" v') v.stay))
-      ) (spcToPlus modes));
+      ) (mapAll modes));
   };
 }

@@ -26,9 +26,8 @@ rec {
   modes = filterAttrs (_: v: (isAttrs v) && (v ? name)) bindings;
   modeNames = mapAttrsToList (_: v: v.name) modes;
   defmode = filterAttrs (_: isString) bindings;
-  spcToPlus =
-    kb:
-    mapAttrs' (
-      n: v: nameValuePair (replaceStrings [ " " ] [ "+" ] n) (if (isAttrs v) then (spcToPlus v) else v)
-    ) kb;
+  mapAttrNamesRec =
+    fn: a: mapAttrs' (n: v: nameValuePair (fn n) (if (isAttrs v) then (spcToPlus v) else v)) a;
+  spcToPlus' = kb: mapAttrNamesRec (replaceStrings [ " " ] [ " + " ]) kb;
+  spcToPlus = kb: mapAttrNamesRec (replaceStrings [ " " ] [ "+" ]) kb;
 }
