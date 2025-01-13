@@ -22,9 +22,20 @@ let
     ;
   cfg = integrations.sxhkd;
   # TODO: change all modifiers
-  mapMod = kb: mapAttrNamesRec (replaceStrings [ "Mod4" ] [ "super" ]) kb;
+  mapMod =
+    kb:
+    mapAttrNamesRec (replaceStrings
+      [
+        "Mod4"
+        "Mod"
+      ]
+      [
+        "super"
+        "mod"
+      ]
+    ) kb;
   mapLower = kb: mapAttrNamesRec toLower kb;
-  mapAll = kb: mapMod (mapLower (spcToPlus' kb));
+  mapAll = kb: mapMod (spcToPlus' kb);
 in
 {
   options.scawm.integrations.sxhkd = mkIntegration "sxhkd";
