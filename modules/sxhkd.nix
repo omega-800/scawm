@@ -28,10 +28,16 @@ let
       [
         "Mod4"
         "Mod"
+        "Alt"
+        "Ctrl"
+        "Shift"
       ]
       [
         "super"
         "mod"
+        "alt"
+        "ctrl"
+        "shift"
       ]
     ) kb;
   mapLower = kb: mapAttrNamesRec toLower kb;
