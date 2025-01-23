@@ -28,6 +28,5 @@ rec {
   defmode = filterAttrs (_: isString) bindings;
   mapAttrNamesRec =
     fn: a: mapAttrs' (n: v: nameValuePair (fn n) (if (isAttrs v) then (spcToPlus v) else v)) a;
-  spcToPlus' = kb: mapAttrNamesRec (replaceStrings [ " " ] [ " + " ]) kb;
   spcToPlus = kb: mapAttrNamesRec (replaceStrings [ " " ] [ "+" ]) kb;
 }

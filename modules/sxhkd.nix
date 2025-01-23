@@ -18,10 +18,10 @@ let
     modeNames
     mkIntegration
     mapAttrNamesRec
-    spcToPlus'
     ;
   cfg = integrations.sxhkd;
   # TODO: change all modifiers
+  spcToPlus' = kb: mapAttrNamesRec (replaceStrings [ "+" " " ] [ " + " " + " ]) kb;
   mapMod =
     kb:
     mapAttrNamesRec (replaceStrings
