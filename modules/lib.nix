@@ -38,7 +38,7 @@ let
               modeOpts
             ])
           */
-          str;
+          attrsOf str;
         default = { };
         description = "Keybindings valid for this mode. Will switch back to default mode once activated";
       };
@@ -51,7 +51,7 @@ let
               modeOpts
             ])
           */
-          str;
+          attrsOf str;
         default = { };
         description = "Keybindings valid for this mode. Will stay in this mode after activation";
       };
