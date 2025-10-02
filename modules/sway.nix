@@ -17,16 +17,17 @@ let
     mkIntegration
     spcToPlus
     ;
-  cfg = integrations.sway;
+  type = "sway";
+  cfg = integrations.${type};
 in
 {
-  options.scawm.integrations.sway = mkIntegration "sway";
+  options.scawm.integrations.${type} = mkIntegration type;
   config = mkIf cfg.enable {
-    wayland.windowManager.sway.config = {
+    wayland.windowManager.${type}.config = {
       inherit modifier;
       keybindings =
-        (mapAttrs (_: v: "exec ${v}") (spcToPlus defmode))
-        // (mapAttrs (_: v: "mode ${v.name}") (spcToPlus modes));
+        (mapAttrs (_: v: "exec ${v}") (spcToPlus (defmode type)))
+        // (mapAttrs (_: v: "mode ${v.name}") (spcToPlus (modes type)));
       modes = mapAttrs' (
         _: v:
         nameValuePair v.name (
@@ -36,7 +37,7 @@ in
             "Escape" = "mode default";
           }
         )
-      ) (spcToPlus modes);
+      ) (spcToPlus (modes type));
     };
   };
 }

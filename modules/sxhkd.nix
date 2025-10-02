@@ -2,7 +2,6 @@
 let
   inherit (lib)
     mkIf
-    toLower
     mapAttrs'
     nameValuePair
     concatMapAttrs
@@ -15,12 +14,11 @@ let
   inherit (import ./lib.nix { inherit lib config; })
     modes
     defmode
-    modeNames
     mkIntegration
     mapAttrNamesRec
     ;
-  cfg = integrations.sxhkd;
-  # TODO: change all modifiers
+  type = "sxhkd";
+  cfg = integrations.${type};
   spcToPlus' = kb: mapAttrNamesRec (replaceStrings [ "+" " " ] [ " + " " + " ]) kb;
   mapMod =
     kb:
@@ -40,18 +38,17 @@ let
         "shift"
       ]
     ) kb;
-  mapLower = kb: mapAttrNamesRec toLower kb;
   mapAll = kb: mapMod (spcToPlus' kb);
 in
 {
-  options.scawm.integrations.sxhkd = mkIntegration "sxhkd";
+  options.scawm.integrations.${type} = mkIntegration type;
   config = mkIf cfg.enable {
-    services.sxhkd.keybindings =
-      (mapAll defmode)
+    services.${type}.keybindings =
+      (mapAll (defmode type))
       // (concatMapAttrs (
         n: v:
-        (optionalAttrs (v ? switch) (mapAttrs' (n': v': nameValuePair "${n} ; ${n'}" v') v.switch))
-        // (optionalAttrs (v ? stay) (mapAttrs' (n': v': nameValuePair "${n} : ${n'}" v') v.stay))
-      ) (mapAll modes));
+        (optionalAttrs (v ? switch) (mapAttrs' (n': nameValuePair "${n} ; ${n'}") v.switch))
+        // (optionalAttrs (v ? stay) (mapAttrs' (n': nameValuePair "${n} : ${n'}") v.stay))
+      ) (mapAll (modes type)));
   };
 }

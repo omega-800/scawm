@@ -7,14 +7,6 @@ let
     optionalAttrs
     hasInfix
     replaceStrings
-    pipe
-    filterAttrs
-    concatLines
-    hasAttr
-    isAttrs
-    imap
-    attrsToList
-    escape
     ;
   inherit (config.scawm)
     integrations
@@ -25,11 +17,12 @@ let
     modeNames
     mkIntegration
     ;
-  cfg = integrations.river;
+  type = "river";
+  cfg = integrations.${type};
   mkKeys = n: (if (hasInfix " " n) then n else "None ${n}");
   mkSpawn = s: "spawn '${escapeA s}'";
-  mapVals = f: a: mapAttrs' (n: v: nameValuePair (mkKeys n) (f v)) a;
-  escapeA = s: replaceStrings [ "'" ] [ "'\\''" ] s;
+  mapVals = f: mapAttrs' (n: v: nameValuePair (mkKeys n) (f v));
+  escapeA = replaceStrings [ "'" ] [ "'\\''" ];
 in
 # concatImapAttrsLines =
 #   f: a:
@@ -39,14 +32,14 @@ in
 #     concatLines
 #   ];
 {
-  options.scawm.integrations.river = mkIntegration "river";
+  options.scawm.integrations.${type} = mkIntegration type;
   config = mkIf cfg.enable {
-    wayland.windowManager.river = {
+    wayland.windowManager.${type} = {
       settings = {
         declare-mode = modeNames;
         map =
           {
-            normal = (mapVals mkSpawn defmode) // (mapVals (v: "enter-mode ${v.name}") modes);
+            normal = (mapVals mkSpawn (defmode type)) // (mapVals (v: "enter-mode ${v.name}") (modes type));
           }
           // (mapAttrs' (
             _: v:
@@ -59,7 +52,7 @@ in
                 "None Escape" = "enter-mode normal";
               }
             )
-          ) modes);
+          ) (modes type));
       };
       # extraConfig = concatImapAttrsLines (
       #   i: _: v:
