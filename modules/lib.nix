@@ -7,6 +7,7 @@ let
     nameValuePair
     types
     mkOption
+    recursiveUpdate
     ;
   inherit (types)
     submodule
@@ -20,7 +21,7 @@ let
   inherit (config.scawm)
     autoEnable
     ;
-  bindingsCfg = wm: config.scawm.bindings // config.scawm.integrations.${wm}.bindings;
+  bindingsCfg = wm: recursiveUpdate config.scawm.bindings config.scawm.integrations.${wm}.bindings;
   modeOpts = submodule (_: {
     options = {
       name = mkOption {
@@ -29,12 +30,28 @@ let
         description = "Name of mode";
       };
       switch = mkOption {
-        type = attrsOf str;
+        type =
+          # TODO:
+          /*
+              lazyAttrsOf (oneOf [
+              str
+              modeOpts
+            ])
+          */
+          str;
         default = { };
         description = "Keybindings valid for this mode. Will switch back to default mode once activated";
       };
       stay = mkOption {
-        type = attrsOf str;
+        type =
+          # TODO:
+          /*
+              lazyAttrsOf (oneOf [
+              str
+              modeOpts
+            ])
+          */
+          str;
         default = { };
         description = "Keybindings valid for this mode. Will stay in this mode after activation";
       };
