@@ -36,7 +36,7 @@ in
   config = mkIf cfg.enable {
     wayland.windowManager.${type} = {
       settings = {
-        declare-mode = modeNames;
+        declare-mode = modeNames type;
         map =
           {
             normal = (mapVals mkSpawn (defmode type)) // (mapVals (v: "enter-mode ${v.name}") (modes type));
