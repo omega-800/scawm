@@ -1,4 +1,9 @@
-{ inputs, lib, config, ... }:
+{
+  inputs,
+  lib,
+  config,
+  ...
+}:
 let
   inherit (lib)
     mkIf
@@ -22,8 +27,8 @@ let
   mkKeys = n: (if (hasInfix " " n) then (replaceStrings [ " " ] [ "," ] n) else "NONE,${n}");
   mkSpawn = s: "spawn,${s}";
   mapVals = f: concatMapAttrLines (n: v: "bind=" + (mkKeys n) + "," + (f v));
-  mapMod =
-    mapAttrNamesRec (replaceStrings
+  mapMod = mapAttrNamesRec (
+    replaceStrings
       [
         "Mod4"
         "Mod"
@@ -38,7 +43,7 @@ let
         "CTRL"
         "SHIFT"
       ]
-    );
+  );
 in
 {
   options.scawm.integrations.${type} = mkIntegration type;
@@ -46,19 +51,19 @@ in
   config = mkIf cfg.enable {
     wayland.windowManager.${type} = {
       settings = ''
-        keymode=common
-        bind=NONE,Escape,setkeymode,default
+        ${concatMapAttrLines (
+          _: v:
+          ''
+            keymode=${v.name}
+            bind=NONE,Escape,setkeymode,default
+          ''
+          + (optionalString (v ? switch) (mapVals (v: "spawn,setkeymode default && ${v}") v.switch))
+          + (optionalString (v ? stay) (mapVals mkSpawn v.stay))
+        ) (mapMod (modes type))}
 
         keymode=default
         ${mapVals mkSpawn (mapMod (defmode type))}
         ${mapVals (v: "setkeymode,${v.name}") (mapMod (modes type))}
-
-        ${concatMapAttrLines (
-          _: v:
-          "keymode=${v.name}\n"
-          + (optionalString (v ? switch) (mapVals (v: "spawn,setkeymode default && ${v}") v.switch))
-          + (optionalString (v ? stay) (mapVals mkSpawn v.stay))
-        ) (mapMod (modes type))}
       '';
     };
   };
