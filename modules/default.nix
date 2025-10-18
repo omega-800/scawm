@@ -9,6 +9,7 @@ in
     ./river.nix
     ./sway.nix
     ./sxhkd.nix
+    ./mango.nix
   ];
   options.scawm = {
     inherit bindings;
