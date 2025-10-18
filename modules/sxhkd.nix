@@ -21,7 +21,6 @@ let
   cfg = integrations.${type};
   spcToPlus' = kb: mapAttrNamesRec (replaceStrings [ "+" " " ] [ " + " " + " ]) kb;
   mapMod =
-    kb:
     mapAttrNamesRec (replaceStrings
       [
         "Mod4"
@@ -37,7 +36,7 @@ let
         "ctrl"
         "shift"
       ]
-    ) kb;
+    );
   mapAll = kb: mapMod (spcToPlus' kb);
 in
 {

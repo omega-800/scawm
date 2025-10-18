@@ -14,6 +14,7 @@ let
     modes
     defmode
     mkIntegration
+    mapAttrNamesRec
     ;
   type = "mango";
   cfg = integrations.${type};
@@ -21,6 +22,23 @@ let
   mkKeys = n: (if (hasInfix " " n) then (replaceStrings [ " " ] [ "," ] n) else "NONE,${n}");
   mkSpawn = s: "spawn,${s}";
   mapVals = f: concatMapAttrLines (n: v: "bind=" + (mkKeys n) + "," + (f v));
+  mapMod =
+    mapAttrNamesRec (replaceStrings
+      [
+        "Mod4"
+        "Mod"
+        "Alt"
+        "Ctrl"
+        "Shift"
+      ]
+      [
+        "SUPER"
+        "MOD"
+        "ALT"
+        "CTRL"
+        "SHIFT"
+      ]
+    );
 in
 {
   options.scawm.integrations.${type} = mkIntegration type;
@@ -32,15 +50,15 @@ in
         bind=NONE,Escape,setkeymode,default
 
         keymode=default
-        ${mapVals mkSpawn (defmode type)}
-        ${mapVals (v: "setkeymode,${v.name}") (modes type)}
+        ${mapVals mkSpawn (mapMod (defmode type))}
+        ${mapVals (v: "setkeymode,${v.name}") (mapMod (modes type))}
 
         ${concatMapAttrLines (
           _: v:
           "keymode=${v.name}\n"
           + (optionalString (v ? switch) (mapVals (v: "spawn,setkeymode default && ${v}") v.switch))
           + (optionalString (v ? stay) (mapVals mkSpawn v.stay))
-        ) (modes type)}
+        ) (mapMod (modes type))}
       '';
     };
   };
