@@ -57,7 +57,8 @@ in
             keymode=${v.name}
             bind=NONE,Escape,setkeymode,default
           ''
-          + (optionalString (v ? switch) (mapVals (v: "spawn,${v}" /*TODO: how to switch back*/) v.switch))
+          + (optionalString (v ? switch) (mapVals (v: "spawn,${v}") v.switch))
+          + (optionalString (v ? switch) (mapVals (_: "setkeymode,default") v.switch))
           + (optionalString (v ? stay) (mapVals mkSpawn v.stay))
         ) (mapMod (modes type))}
 
