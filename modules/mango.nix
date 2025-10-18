@@ -37,7 +37,7 @@ in
 
         ${concatMapAttrLines (
           _: v:
-          "keymode=${v.name}"
+          "keymode=${v.name}\n"
           + (optionalString (v ? switch) (mapVals (v: "spawn,setkeymode default && ${v}") v.switch))
           + (optionalString (v ? stay) (mapVals mkSpawn v.stay))
         ) (modes type)}
