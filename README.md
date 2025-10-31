@@ -41,11 +41,15 @@ example config can be found in ./test
 ## roadmap
 
 - simple exec's working for 
-  - [X] sxhkd (not fully tested)
+  - [X] sxhkd 
   - [X] sway
-  - [X] river (not fully tested)
+  - [X] river 
+  - [X] mangowc 
   - [ ] hyprland
 - wm-specific actions (eg. resizing)
   - [ ] sway
   - [ ] river
+  - [ ] mangowc 
   - [ ] hyprland
+- misc
+  - [ ] nested modes
