@@ -1,21 +1,23 @@
 { lib, config, ... }:
 let
   inherit (lib)
-    mkIf
-    mapAttrs'
-    nameValuePair
-    mapAttrs
     optionalAttrs
+    nameValuePair
+    mapAttrs'
+    mapAttrs
+    isString
+    mkIf
     ;
   inherit (config.scawm)
     integrations
     modifier
     ;
   inherit (import ./lib.nix { inherit lib config; })
-    modes
-    defmode
     mkIntegration
+    topLvlModes
     spcToPlus
+    defmode
+    modes
     ;
   type = "sway";
   cfg = integrations.${type};
@@ -27,12 +29,16 @@ in
       inherit modifier;
       keybindings =
         (mapAttrs (_: v: "exec ${v}") (spcToPlus (defmode type)))
-        // (mapAttrs (_: v: "mode ${v.name}") (spcToPlus (modes type)));
+        // (mapAttrs (_: v: "mode ${v.name}") (spcToPlus (topLvlModes type)));
       modes = mapAttrs' (
         _: v:
         nameValuePair v.name (
-          (optionalAttrs (v ? switch) (mapAttrs (_: v: "mode default, exec ${v}") v.switch))
-          // (optionalAttrs (v ? stay) (mapAttrs (_: v: "exec ${v}") v.stay))
+          (optionalAttrs (v ? switch) (
+            mapAttrs (_: v: if isString v then "mode default, exec ${v}" else "mode ${v.name}") v.switch
+          ))
+          // (optionalAttrs (v ? stay) (
+            mapAttrs (_: v: if isString v then "exec ${v}" else "mode ${v.name}") v.stay
+          ))
           // {
             "Escape" = "mode default";
           }

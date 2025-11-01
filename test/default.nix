@@ -16,6 +16,14 @@ in
         switch = {
           "s" = "spotify";
           "f" = "firefox";
+          "r" = {
+            name = "Run rofi";
+            switch = {
+              "p" = "rofi-pass";
+              "d" = "rofi-dmenu";
+              "b" = "rofi-bluetooth";
+            };
+          };
         };
       };
       "${modifier} m" = {
@@ -35,4 +43,5 @@ in
     homeDirectory = "/home/alice";
     stateVersion = "24.11";
   };
+  services.sxhkd.enable = true;
 }

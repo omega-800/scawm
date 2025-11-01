@@ -36,7 +36,7 @@ config.scawm = {
 };
 ```
 
-example config can be found in ./test
+example config can be found in `./test`
 
 ## roadmap
 
@@ -52,4 +52,4 @@ example config can be found in ./test
   - [ ] mangowc 
   - [ ] hyprland
 - misc
-  - [ ] nested modes
+  - [X] nested modes

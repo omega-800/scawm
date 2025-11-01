@@ -26,39 +26,54 @@
         "aarch64-linux"
         "i686-linux"
       ];
-      forEachSystem = f: nixpkgs.lib.genAttrs systems f;
-      mkPkgs = system: import nixpkgs { inherit system; };
+      eachSystem =
+        f:
+        nixpkgs.lib.genAttrs systems (
+          system:
+          (f (
+            import nixpkgs {
+              inherit system;
+              config = { };
+              overlays = [ ];
+            }
+          ))
+        );
     in
     {
-      homeManagerModules = rec {
-        scawm = ./modules;
-        default = scawm;
-      };
-      homeConfigurations = forEachSystem (
-        system:
+      hmModules = self.homeManagerModules;
+      homeManagerModules =
+        let
+          scawm = ./modules;
+        in
+        {
+          inherit scawm;
+          default = scawm;
+        };
+      homeConfigurations = eachSystem (
+        pkgs:
         home-manager.lib.homeManagerConfiguration {
-          pkgs = mkPkgs system;
+          inherit pkgs;
           modules = [
             self.homeManagerModules.scawm
             ./test
           ];
         }
       );
-      devShells = forEachSystem (
-        system:
+      devShells = eachSystem (
+        pkgs:
         let
-          pkgs = mkPkgs system;
-        in
-        rec {
           scawm = pkgs.mkShell {
             packages = with pkgs; [
               nixd
               nixfmt-rfc-style
             ];
           };
+        in
+        {
+          inherit scawm;
           default = scawm;
         }
       );
-      formatter = forEachSystem (system: (mkPkgs system).nixfmt-rfc-style);
+      formatter = eachSystem (pkgs: pkgs.nixfmt-rfc-style);
     };
 }

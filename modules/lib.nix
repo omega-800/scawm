@@ -8,6 +8,8 @@ let
     types
     mkOption
     recursiveUpdate
+    concatMapAttrs
+    optionalAttrs
     ;
   inherit (types)
     submodule
@@ -30,28 +32,18 @@ let
         description = "Name of mode";
       };
       switch = mkOption {
-        type =
-          # TODO:
-          /*
-              lazyAttrsOf (oneOf [
-              str
-              modeOpts
-            ])
-          */
-          attrsOf str;
+        type = lazyAttrsOf (oneOf [
+          str
+          modeOpts
+        ]);
         default = { };
         description = "Keybindings valid for this mode. Will switch back to default mode once activated";
       };
       stay = mkOption {
-        type =
-          # TODO:
-          /*
-              lazyAttrsOf (oneOf [
-              str
-              modeOpts
-            ])
-          */
-          attrsOf str;
+        type = lazyAttrsOf (oneOf [
+          str
+          modeOpts
+        ]);
         default = { };
         description = "Keybindings valid for this mode. Will stay in this mode after activation";
       };
@@ -92,6 +84,7 @@ rec {
       };
     };
   };
+  inherit bindingsCfg;
   mkIntegration = wm: {
     inherit bindings;
     enable = mkOption {
@@ -100,10 +93,27 @@ rec {
       default = autoEnable;
     };
   };
-  modes = wm: filterAttrs (_: v: (isAttrs v) && (v ? name)) (bindingsCfg wm);
+
+  modesRec =
+    a:
+    concatMapAttrs (
+      n: v:
+      optionalAttrs ((isAttrs v) && (v ? name)) (
+        {
+          "${n}" = v;
+        }
+        // (optionalAttrs (v ? switch) modesRec v.switch)
+        // (optionalAttrs (v ? stay) modesRec v.stay)
+      )
+    ) a;
+  modes = wm: modesRec (bindingsCfg wm);
+
+  topLvlModes = wm: filterAttrs (_: v: (isAttrs v) && (v ? name)) (bindingsCfg wm);
   modeNames = wm: mapAttrsToList (_: v: v.name) (modes wm);
   defmode = wm: filterAttrs (_: isString) (bindingsCfg wm);
   mapAttrNamesRec =
     fn: a: mapAttrs' (n: v: nameValuePair (fn n) (if (isAttrs v) then (spcToPlus v) else v)) a;
   spcToPlus = kb: mapAttrNamesRec (replaceStrings [ " " ] [ "+" ]) kb;
+  topLvlBinds = filterAttrs (_: isString);
+  modeBinds = filterAttrs (_: v: !(isString v));
 }
