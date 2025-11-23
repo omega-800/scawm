@@ -8,9 +8,7 @@ let
     mapAttrs'
     mkIf
     ;
-  inherit (config.scawm)
-    integrations
-    ;
+  inherit (config.scawm) integrations;
   inherit (import ./lib.nix { inherit lib config; })
     mapAttrNamesRec
     mkIntegration

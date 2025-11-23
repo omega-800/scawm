@@ -15,7 +15,14 @@ This is a [home-manager](https://nix-community.github.io/home-manager/) module e
 }
 ```
 
-modifiers must be separated with "+", keys with " "
+Modifiers must be separated with "+", keys with " "     
+
+Available modifiers are: 
+- Mod4
+- Mod
+- Alt
+- Ctrl
+- Shift
 
 ```nix
 # configuration.nix
@@ -23,23 +30,25 @@ modifiers must be separated with "+", keys with " "
 {
   imports = [ inputs.scawm.homeManagerModules.scawm ];
   
-  config.scawm = let 
+  config.scawm =
+    let
       modifier = "Mod4";
-    in {
+    in
+    {
       enable = true;
       inherit modifier;
       bindings = {
-          "Ctrl+Shift s" = "flameshot full";
-          "${modifier} r" = {
-              name = "Run";
-              switch = {
-                  "s" = "spotify";
-                  "f" = "firefox";
-              };
+        "Ctrl+Shift s" = "flameshot full";
+        "${modifier} r" = {
+          name = "Run";
+          switch = {
+            "s" = "spotify";
+            "f" = "firefox";
           };
-      }; 
-  };
-  }
+        };
+      };
+    };
+}
 ```
 
 example config can be found in `./test/default.nix`

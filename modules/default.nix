@@ -9,12 +9,12 @@ in
     ./river.nix
     ./sway.nix
     ./sxhkd.nix
-    #./mango.nix
+    ./mango.nix
   ];
   options.scawm = {
     inherit bindings;
-    enable = mkEnableOption "Enables ShortCuts for Any Window Manager";
-    autoEnable = mkEnableOption "Configures your shortcuts for every available wm / compositor";
+    enable = mkEnableOption "ShortCuts for Any Window Manager";
+    autoEnable = mkEnableOption "Autoconfiguration of your shortcuts for every available wm / compositor";
     modifier = mkOption {
       type = str;
       description = "Main modifier key";

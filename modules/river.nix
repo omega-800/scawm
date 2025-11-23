@@ -9,9 +9,7 @@ let
     hasInfix
     mkIf
     ;
-  inherit (config.scawm)
-    integrations
-    ;
+  inherit (config.scawm) integrations;
   inherit (import ./lib.nix { inherit lib config; })
     mkIntegration
     topLvlModes
