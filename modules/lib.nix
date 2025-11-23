@@ -84,7 +84,6 @@ rec {
       };
     };
   };
-  inherit bindingsCfg;
   mkIntegration = wm: {
     inherit bindings;
     enable = mkOption {
@@ -94,6 +93,7 @@ rec {
     };
   };
 
+  inherit bindingsCfg;
   modesRec =
     a:
     concatMapAttrs (
@@ -107,13 +107,13 @@ rec {
       )
     ) a;
   modes = wm: modesRec (bindingsCfg wm);
-
-  topLvlModes = wm: filterAttrs (_: v: (isAttrs v) && (v ? name)) (bindingsCfg wm);
-  modeNames = wm: mapAttrsToList (_: v: v.name) (modes wm);
   defmode = wm: filterAttrs (_: isString) (bindingsCfg wm);
+  modeNames = wm: mapAttrsToList (_: v: v.name) (modes wm);
+  modeBinds = filterAttrs (_: v: !(isString v));
+  topLvlModes = wm: filterAttrs (_: v: (isAttrs v) && (v ? name)) (bindingsCfg wm);
+  topLvlBinds = filterAttrs (_: isString);
+
   mapAttrNamesRec =
     fn: a: mapAttrs' (n: v: nameValuePair (fn n) (if (isAttrs v) then (spcToPlus v) else v)) a;
   spcToPlus = kb: mapAttrNamesRec (replaceStrings [ " " ] [ "+" ]) kb;
-  topLvlBinds = filterAttrs (_: isString);
-  modeBinds = filterAttrs (_: v: !(isString v));
 }

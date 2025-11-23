@@ -7,10 +7,12 @@ This is a [home-manager](https://nix-community.github.io/home-manager/) module e
 ```nix
 # flake.nix
 
-inputs.scawm = {
-    url = "github:omega-800/scawm";
-    inputs.nixpkgs.follows = "nixpkgs";
-};
+{
+  inputs.scawm = {
+      url = "github:omega-800/scawm";
+      inputs.nixpkgs.follows = "nixpkgs";
+  };
+}
 ```
 
 modifiers must be separated with "+", keys with " "
@@ -18,25 +20,29 @@ modifiers must be separated with "+", keys with " "
 ```nix
 # configuration.nix
 
-imports = [ inputs.scawm.homeManagerModules.scawm ];
-
-config.scawm = {
-    enable = true;
-    modifier = "Mod4";
-    bindings = {
-        "Ctrl+Shift s" = "flameshot full";
-        "Mod4 r" = {
-            name = "Run";
-            switch = {
-                "s" = "spotify";
-                "f" = "firefox";
-            };
-        };
-    }; 
-};
+{
+  imports = [ inputs.scawm.homeManagerModules.scawm ];
+  
+  config.scawm = let 
+      modifier = "Mod4";
+    in {
+      enable = true;
+      inherit modifier;
+      bindings = {
+          "Ctrl+Shift s" = "flameshot full";
+          "${modifier} r" = {
+              name = "Run";
+              switch = {
+                  "s" = "spotify";
+                  "f" = "firefox";
+              };
+          };
+      }; 
+  };
+  }
 ```
 
-example config can be found in `./test`
+example config can be found in `./test/default.nix`
 
 ## roadmap
 
