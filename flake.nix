@@ -40,7 +40,7 @@
         );
     in
     {
-      hmModules = self.homeManagerModules;
+      homeModules = self.homeManagerModules;
       homeManagerModules =
         let
           scawm = ./modules;
